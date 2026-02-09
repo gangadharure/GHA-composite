@@ -1,0 +1,21 @@
+name: "Slack Post"
+description: "Post message to Slack"
+
+inputs:
+  webhook-url:
+    required: true
+    description: Slack webhook
+  message:
+    required: true
+    description: Message text
+
+runs:
+  using: composite
+  steps:
+    - name: Send Slack message
+      shell: bash
+      run: |
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          --data "{\"text\":\"${{ inputs.message }}\"}" \
+          "${{ inputs.webhook-url }}"
