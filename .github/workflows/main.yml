@@ -1,21 +1,21 @@
-name: "Slack Post"
-description: "Post message to Slack"
+name: Build
 
-inputs:
-  webhook-url:
-    required: true
-    description: Slack webhook
-  message:
-    required: true
-    description: Message text
+on:
+  push:
+    branches: [ main ]
 
-runs:
-  using: composite
-  steps:
-    - name: Send Slack message
-      shell: bash
-      run: |
-        curl -X POST \
-          -H "Content-Type: application/json" \
-          --data "{\"text\":\"${{ inputs.message }}\"}" \
-          "${{ inputs.webhook-url }}"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run build
+        run: echo "Build done"
+
+      - name: Notify Slack
+        uses: ./.github/actions/slack-post
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          message: "Build finished for ${{ github.repository }} ✅"
